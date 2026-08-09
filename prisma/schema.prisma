@@ -1,0 +1,140 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// model User {
+//   id       Int    @id @default(autoincrement())
+//   username String @unique
+//   email    String @unique
+//   fullName String
+
+//   avatar     String
+//   coverImage String?
+
+//   password     String
+//   refreshToken String?
+
+//   vedios Video[]
+
+//   watchHistory WatchHistory[]
+
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+
+//   // for searchable in database
+//   @@index([username])
+//   @@index([fullName])
+//   @@map("users")
+// }
+
+// model Video {
+//   id Int @id @default(autoincrement())
+
+//   videoFile   String
+//   thumbnail   String
+//   title       String
+//   description String
+//   duration    Int
+//   views       Int     @default(0)
+//   isPublished Boolean @default(true)
+
+//   ownerId  Int?
+//   owner User? @relation(fields: [])
+
+//   watchHistory WatchHistory[]
+
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+
+//   @@index([ownerId])
+//   @@map("videos")
+// }
+
+// model WatchHistory {
+//   id Int @id @default(autoincrement())
+
+//   userId  Int
+//   videoId Int
+
+//   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+//   video Video @relation(fields: [videoId], references: [id], onDelete: Cascade)
+
+//   watchedAt DateTime @default(now())
+
+//   @@unique([userId, videoId])
+//   @@index([userId])
+//   @@index([videoId])
+//   @@map("watch_history")
+// }
+
+model User {
+  id           Int     @id @default(autoincrement())
+  username     String  @unique
+  email        String  @unique
+  fullName     String
+  avatar       String
+  coverImage   String?
+  password     String
+  role         String
+  refreshToken String?
+
+  videos       Video[]
+  watchHistory WatchHistory[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([username])
+  @@index([fullName])
+  @@map("users")
+}
+
+model Video {
+  id          Int     @id @default(autoincrement())
+  videoFile   String
+  thumbnail   String
+  title       String
+  description String
+  duration    Int
+  views       Int     @default(0)
+  isPublished Boolean @default(true)
+
+  ownerId Int?
+  owner   User? @relation(fields: [ownerId], references: [id], onDelete: SetNull)
+
+  watchHistory WatchHistory[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([ownerId])
+  @@map("videos")
+}
+
+model WatchHistory {
+  id      Int @id @default(autoincrement())
+  userId  Int
+  videoId Int
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  video Video @relation(fields: [videoId], references: [id], onDelete: Cascade)
+
+  watchedAt DateTime @default(now())
+
+  @@unique([userId, videoId])
+  @@index([userId])
+  @@index([videoId])
+  @@map("watch_history")
+}
